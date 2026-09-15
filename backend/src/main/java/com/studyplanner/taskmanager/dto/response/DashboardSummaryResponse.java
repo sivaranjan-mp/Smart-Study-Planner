@@ -1,5 +1,10 @@
 package com.studyplanner.taskmanager.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 /**
@@ -7,11 +12,16 @@ import java.util.List;
  * Responsibility: Outbound representation of system aggregates for dashboard metrics.
  * Structure: { totalTasks, completedTasks, pendingTasks, inProgressTasks, completionPercentage, upcomingDeadlines: List<TaskResponse> }
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DashboardSummaryResponse {
-    // TODO: Define totalTasks (long)
-    // TODO: Define completedTasks (long)
-    // TODO: Define pendingTasks (long)
-    // TODO: Define inProgressTasks (long)
-    // TODO: Define completionPercentage (double)
-    // TODO: Define upcomingDeadlines (List<TaskResponse>)
+
+    private long totalTasks;
+    private long completedTasks;
+    private long pendingTasks;
+    private long inProgressTasks;
+    private double completionPercentage;
+    private List<TaskResponse> upcomingDeadlines;
 }
