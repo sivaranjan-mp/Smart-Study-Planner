@@ -1,0 +1,1 @@
+Before implementing any part of this project, read docs/architecture.md and follow its folder structure, layering (controller → service → repository → entity), naming conventions, and file dependency order in Section 8/9. Do not deviate from the DTO/ApiResponse/ErrorResponse contracts in Section 4.2.
