@@ -1,14 +1,23 @@
-import apiClient from './apiClient';
+import apiClient from './apiClient.js';
 
 /**
  * Dashboard REST API Service.
- * Responsibility: Service methods for fetching dashboard summary aggregates.
+ * Responsibility: Service methods for fetching dashboard summary aggregates
+ * per Section 4.3 & 5.2 of architecture.
  */
 
-// TODO: export const getDashboardSummary = () => apiClient.get('/dashboard/summary');
+/**
+ * Fetch dashboard summary metrics and upcoming deadlines.
+ * Endpoint: GET /dashboard/summary
+ *
+ * @returns {Promise<Object>} DashboardSummaryResponse { totalTasks, completedTasks, pendingTasks, inProgressTasks, completionPercentage, upcomingDeadlines }
+ */
+export const getDashboardSummary = () => {
+  return apiClient.get('/dashboard/summary');
+};
 
 export const dashboardService = {
-  // TODO: Export dashboard summary method
+  getDashboardSummary,
 };
 
 export default dashboardService;
