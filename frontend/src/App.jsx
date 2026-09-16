@@ -1,16 +1,16 @@
 import React from 'react';
+import MainLayout from './layouts/MainLayout.jsx';
+import AppRoutes from './routes/AppRoutes.jsx';
 
 /**
  * Top-Level Application Component.
  * Responsibility: Renders MainLayout wrapping AppRoutes.
  */
 function App() {
-  // TODO: Render MainLayout wrapping AppRoutes
   return (
-    <div>
-      {/* TODO: Integrate MainLayout and AppRoutes */}
-      <h1>Smart Study Planner</h1>
-    </div>
+    <MainLayout>
+      <AppRoutes />
+    </MainLayout>
   );
 }
 
