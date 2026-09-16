@@ -182,11 +182,16 @@ export default function AppSidebar({ mobileOpen, onClose, drawerWidth = 260 }) {
                     {item.icon}
                   </ListItemIcon>
                   <ListItemText
-                    primary={item.label}
-                    primaryTypographyProps={{
-                      fontSize: '0.875rem',
-                      fontWeight: active ? 600 : 500,
-                    }}
+                    primary={
+                      <Typography
+                        sx={{
+                          fontSize: '0.875rem',
+                          fontWeight: active ? 600 : 500,
+                        }}
+                      >
+                        {item.label}
+                      </Typography>
+                    }
                   />
                 </ListItemButton>
               </ListItem>

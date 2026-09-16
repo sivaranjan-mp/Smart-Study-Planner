@@ -6,7 +6,7 @@ import axios from 'axios';
  * to unwrap the Spring Boot ApiResponse envelope and normalize error payloads.
  */
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
+  baseURL: import.meta.env?.VITE_API_BASE_URL || 'http://localhost:8080/api',
   headers: {
     'Content-Type': 'application/json',
   },

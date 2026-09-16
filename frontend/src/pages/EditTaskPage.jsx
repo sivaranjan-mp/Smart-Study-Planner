@@ -1,79 +1,104 @@
-import React from 'react';
-import { Box, Typography, Paper, Button, Chip } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Button } from '@mui/material';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
-import EditRoundedIcon from '@mui/icons-material/EditRounded';
-import { useParams, Link as RouterLink } from 'react-router-dom';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
+import useTask from '../hooks/useTask.js';
+import { updateTask } from '../services/taskService.js';
+import PageHeader from '../components/common/PageHeader.jsx';
+import LoadingSpinner from '../components/common/LoadingSpinner.jsx';
+import ErrorBanner from '../components/common/ErrorBanner.jsx';
+import TaskForm from '../components/tasks/TaskForm.jsx';
 
 /**
  * Edit Task Page.
- * Responsibility: Edit Task view (Route: `/tasks/:id/edit`).
- * In Phase 5, serves as routing & route parameter smoke test.
- * TaskForm pre-population and API mutation will be integrated in Phase 6.
+ * Responsibility: Edit Task view (Route: `/tasks/:id/edit`) fetching existing task data,
+ * rendering controlled TaskForm in edit mode, and updating via PUT /api/tasks/{id}.
  */
 export default function EditTaskPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
+  const { data: task, loading, error: fetchError, refetch } = useTask(id);
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [updateError, setUpdateError] = useState(null);
+
+  const handleUpdateTask = async (payload) => {
+    setUpdateLoading(true);
+    setUpdateError(null);
+    try {
+      await updateTask(id, payload);
+      navigate(`/tasks/${id}`);
+    } catch (err) {
+      setUpdateError(err);
+      setUpdateLoading(false);
+    }
+  };
+
+  if (loading && !task) {
+    return <LoadingSpinner message={`Loading task #${id} for editing...`} />;
+  }
+
+  if (fetchError || !task) {
+    return (
+      <Box sx={{ maxWidth: 800, mx: 'auto' }}>
+        <PageHeader
+          title="Edit Task"
+          backButton={
+            <Button
+              component={RouterLink}
+              to="/tasks"
+              startIcon={<ArrowBackRoundedIcon />}
+              size="small"
+              sx={{ color: 'text.secondary' }}
+            >
+              Back to Tasks
+            </Button>
+          }
+        />
+        <ErrorBanner
+          error={fetchError || 'Task not found or has been removed.'}
+          onRetry={refetch}
+          title="Could not load task for editing"
+        />
+      </Box>
+    );
+  }
 
   return (
-    <Box>
-      <Box sx={{ mb: 4 }}>
-        <Button
-          component={RouterLink}
-          to={`/tasks/${id}`}
-          startIcon={<ArrowBackRoundedIcon />}
-          sx={{ mb: 2, color: 'text.secondary', fontWeight: 500 }}
-          size="small"
-        >
-          Back to Details
-        </Button>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 0.5 }}>
-          <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
-            Edit Task #{id}
-          </Typography>
-          <Chip
-            label="Phase 5 Smoke Test"
-            color="info"
+    <Box sx={{ maxWidth: 800, mx: 'auto' }}>
+      {/* Page Header */}
+      <PageHeader
+        title={`Edit Task: ${task.taskName}`}
+        subtitle={`Update subject, priority, deadline, status, or description for task #${id}.`}
+        backButton={
+          <Button
+            component={RouterLink}
+            to={`/tasks/${id}`}
+            startIcon={<ArrowBackRoundedIcon />}
             size="small"
-            variant="outlined"
-            sx={{ fontWeight: 600 }}
-          />
-        </Box>
-        <Typography variant="subtitle1" color="text.secondary">
-          Update task details, modify priority, status, and deadline.
-        </Typography>
-      </Box>
+            sx={{ color: 'text.secondary', fontWeight: 500 }}
+          >
+            Back to Details
+          </Button>
+        }
+      />
 
-      <Paper
-        sx={{
-          p: { xs: 4, sm: 6 },
-          borderRadius: 3,
-          border: '1px solid #e2e8f0',
-          textAlign: 'center',
-          backgroundColor: '#ffffff',
-        }}
-      >
-        <Box
-          sx={{
-            width: 60,
-            height: 60,
-            borderRadius: '50%',
-            backgroundColor: 'rgba(245, 158, 11, 0.1)',
-            color: 'warning.main',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            mx: 'auto',
-            mb: 2,
-          }}
-        >
-          <EditRoundedIcon sx={{ fontSize: 32 }} />
-        </Box>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-          Edit Form for Task ID: {id} (Phase 6)
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 460, mx: 'auto' }}>
-          Form populated with existing task data and update submission will be implemented in Phase 6.
-        </Typography>
-      </Paper>
+      {/* Update Error Alert */}
+      {updateError && (
+        <ErrorBanner
+          error={updateError}
+          title="Failed to update task"
+        />
+      )}
+
+      {/* Controlled Edit Task Form */}
+      <TaskForm
+        initialValues={task}
+        onSubmit={handleUpdateTask}
+        loading={updateLoading}
+        isEdit={true}
+        onCancel={() => navigate(`/tasks/${id}`)}
+      />
     </Box>
   );
 }
